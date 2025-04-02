@@ -64,7 +64,7 @@ const Sidebar = () => {
           </ul>
         </nav>
       </div>
-      <div className="sidebar-bottom">
+      <div className="sidebar-bottom ">
         <ul>
           <li
             className={activeItem === menuItems.length ? "active-logout" : ""}

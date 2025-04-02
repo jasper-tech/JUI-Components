@@ -1,0 +1,605 @@
+Project Structure for J UI library. 
+
+```bash
+# Create a new directory for your project
+mkdir my-ui-library
+cd my-ui-library
+
+# Initialize package.json
+npm init -y
+
+# Install core dependencies
+npm install react react-dom @types/react @types/react-dom typescript --save-peer
+
+# Install development dependencies
+npm install rollup @rollup/plugin-node-resolve @rollup/plugin-commonjs @rollup/plugin-typescript rollup-plugin-peer-deps-external rollup-plugin-terser @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript @storybook/react @storybook/addon-essentials @storybook/addon-links @storybook/addon-a11y @testing-library/react @testing-library/jest-dom jest jest-environment-jsdom ts-jest styled-components @types/styled-components eslint prettier eslint-config-prettier eslint-plugin-react eslint-plugin-react-hooks --save-dev
+
+# Initialize TypeScript
+npx tsc --init
+
+# Create project structure
+mkdir -p src/components src/hooks src/utils src/theme src/stories .storybook scripts
+
+```
+
+Set up the key configuration files:
+
+```javascript
+// tsconfig.json
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "esnext",
+    "lib": ["dom", "esnext"],
+    "jsx": "react",
+    "declaration": true,
+    "declarationDir": "dist/types",
+    "sourceMap": true,
+    "outDir": "dist",
+    "strict": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.stories.tsx", "**/*.test.tsx"]
+}
+
+// rollup.config.js
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import typescript from '@rollup/plugin-typescript';
+import { terser } from 'rollup-plugin-terser';
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+import pkg from './package.json';
+
+export default {
+  input: 'src/index.ts',
+  output: [
+    {
+      file: pkg.main,
+      format: 'cjs',
+      sourcemap: true,
+    },
+    {
+      file: pkg.module,
+      format: 'esm',
+      sourcemap: true,
+    },
+  ],
+  plugins: [
+    peerDepsExternal(),
+    resolve(),
+    commonjs(),
+    typescript({ tsconfig: './tsconfig.json' }),
+    terser(),
+  ],
+  external: ['react', 'react-dom', 'styled-components']
+};
+
+// .storybook/main.js
+module.exports = {
+  stories: ['../src/**/*.stories.@(js|jsx|ts|tsx|mdx)'],
+  addons: [
+    '@storybook/addon-links',
+    '@storybook/addon-essentials',
+    '@storybook/addon-a11y',
+  ],
+  framework: '@storybook/react',
+};
+
+// .storybook/preview.js
+import { ThemeProvider } from 'styled-components';
+import { theme } from '../src/theme';
+
+export const parameters = {
+  actions: { argTypesRegex: "^on[A-Z].*" },
+  controls: {
+    matchers: {
+      color: /(background|color)$/i,
+      date: /Date$/,
+    },
+  },
+};
+
+export const decorators = [
+  (Story) => (
+    <ThemeProvider theme={theme}>
+      <Story />
+    </ThemeProvider>
+  ),
+];
+
+// jest.config.js
+module.exports = {
+  preset: 'ts-jest',
+  testEnvironment: 'jsdom',
+  setupFilesAfterEnv: ['@testing-library/jest-dom/extend-expect'],
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
+  },
+  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+};
+
+// .eslintrc.js
+module.exports = {
+  parser: '@typescript-eslint/parser',
+  extends: [
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:react-hooks/recommended',
+    'prettier'
+  ],
+  plugins: ['react', '@typescript-eslint', 'react-hooks'],
+  env: {
+    browser: true,
+    node: true,
+    jest: true,
+  },
+  settings: {
+    react: {
+      version: 'detect',
+    },
+  },
+  rules: {
+    'react/prop-types': 'off',
+  },
+};
+
+// .prettierrc.js
+module.exports = {
+  semi: true,
+  trailingComma: 'all',
+  singleQuote: true,
+  printWidth: 80,
+  tabWidth: 2,
+};
+
+```
+ 
+ Add the necessary updates to package.json:
+
+```json
+{
+  "name": "my-ui-library",
+  "version": "0.1.0",
+  "description": "A modern React UI component library",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "rollup -c",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook",
+    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
+    "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,css,md}'",
+    "prepare": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0",
+    "styled-components": "^5.0.0 || ^6.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/my-ui-library.git"
+  },
+  "keywords": [
+    "react",
+    "ui",
+    "components",
+    "library"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
+
+```
+
+Create a basic entry point and theme setup:
+
+```typescript
+// src/index.ts
+// Main entry file that exports all components
+export * from './components';
+export * from './hooks';
+export * from './theme';
+
+// src/components/index.ts
+// Export all components from here
+export * from './Button';
+export * from './Box';
+// Add more component exports as you create them
+
+// src/theme/index.ts
+export const theme = {
+  colors: {
+    primary: '#0070f3',
+    secondary: '#7928ca',
+    success: '#0070f3',
+    error: '#ff0000',
+    warning: '#f5a623',
+    info: '#0070f3',
+    background: {
+      main: '#ffffff',
+      dark: '#f7f8fa',
+    },
+    text: {
+      primary: '#000000',
+      secondary: '#666666',
+      disabled: '#999999',
+    },
+  },
+  spacing: {
+    xs: '4px',
+    sm: '8px',
+    md: '16px',
+    lg: '24px',
+    xl: '32px',
+    xxl: '48px',
+  },
+  typography: {
+    fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    fontSize: {
+      xs: '12px',
+      sm: '14px',
+      md: '16px',
+      lg: '18px',
+      xl: '20px',
+      xxl: '24px',
+    },
+    fontWeight: {
+      light: 300,
+      regular: 400,
+      medium: 500,
+      bold: 700,
+    },
+    lineHeight: {
+      xs: '1.2',
+      sm: '1.3',
+      md: '1.5',
+      lg: '1.8',
+    },
+  },
+  breakpoints: {
+    xs: '0px',
+    sm: '576px',
+    md: '768px',
+    lg: '992px',
+    xl: '1200px',
+  },
+  borderRadius: {
+    xs: '2px',
+    sm: '4px',
+    md: '8px',
+    lg: '16px',
+    circular: '50%',
+  },
+  shadows: {
+    sm: '0 1px 3px rgba(0,0,0,0.1)',
+    md: '0 4px 6px rgba(0,0,0,0.1)',
+    lg: '0 10px 15px rgba(0,0,0,0.1)',
+  },
+  transitions: {
+    fast: '0.1s ease',
+    medium: '0.3s ease',
+    slow: '0.5s ease',
+  },
+};
+
+export type Theme = typeof theme;
+
+// src/components/Box/Box.tsx
+import styled from 'styled-components';
+import { 
+  space, SpaceProps,
+  color, ColorProps,
+  layout, LayoutProps,
+  flexbox, FlexboxProps,
+  border, BorderProps,
+  position, PositionProps,
+  shadow, ShadowProps,
+  typography, TypographyProps
+} from 'styled-system';
+
+export type BoxProps = 
+  SpaceProps & 
+  ColorProps & 
+  LayoutProps & 
+  FlexboxProps & 
+  BorderProps & 
+  PositionProps &
+  ShadowProps &
+  TypographyProps & {
+    as?: React.ElementType;
+  };
+
+export const Box = styled.div<BoxProps>`
+  ${space}
+  ${color}
+  ${layout}
+  ${flexbox}
+  ${border}
+  ${position}
+  ${shadow}
+  ${typography}
+`;
+
+// src/components/Box/index.ts
+export * from './Box';
+
+// src/components/Button/Button.tsx
+import React from 'react';
+import styled from 'styled-components';
+import { space, SpaceProps, variant } from 'styled-system';
+
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'text';
+export type ButtonSize = 'sm' | 'md' | 'lg';
+
+export interface ButtonProps extends SpaceProps {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  fullWidth?: boolean;
+  disabled?: boolean;
+  children: React.ReactNode;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+}
+
+const StyledButton = styled.button<ButtonProps>`
+  font-family: ${props => props.theme.typography.fontFamily};
+  border-radius: ${props => props.theme.borderRadius.sm};
+  font-weight: ${props => props.theme.typography.fontWeight.medium};
+  cursor: pointer;
+  border: none;
+  transition: ${props => props.theme.transitions.medium};
+  
+  ${props => props.fullWidth && `width: 100%;`}
+  
+  ${props =>
+    props.disabled &&
+    `
+    opacity: 0.6;
+    cursor: not-allowed;
+  `}
+  
+  ${variant({
+    variants: {
+      primary: {
+        bg: 'colors.primary',
+        color: 'white',
+        '&:hover': {
+          bg: 'colors.primary',
+          filter: 'brightness(90%)',
+        },
+      },
+      secondary: {
+        bg: 'colors.secondary',
+        color: 'white',
+        '&:hover': {
+          bg: 'colors.secondary',
+          filter: 'brightness(90%)',
+        },
+      },
+      outline: {
+        bg: 'transparent',
+        color: 'colors.primary',
+        border: '1px solid',
+        borderColor: 'colors.primary',
+        '&:hover': {
+          bg: 'colors.primary',
+          color: 'white',
+        },
+      },
+      text: {
+        bg: 'transparent',
+        color: 'colors.primary',
+        '&:hover': {
+          textDecoration: 'underline',
+        },
+      },
+    },
+  })}
+  
+  ${variant({
+    prop: 'size',
+    variants: {
+      sm: {
+        fontSize: 'typography.fontSize.sm',
+        padding: 'spacing.xs spacing.sm',
+      },
+      md: {
+        fontSize: 'typography.fontSize.md',
+        padding: 'spacing.sm spacing.md',
+      },
+      lg: {
+        fontSize: 'typography.fontSize.lg',
+        padding: 'spacing.md spacing.lg',
+      },
+    },
+  })}
+  
+  ${space}
+`;
+
+export const Button: React.FC<ButtonProps> = ({
+  variant = 'primary',
+  size = 'md',
+  fullWidth = false,
+  disabled = false,
+  children,
+  onClick,
+  ...rest
+}) => {
+  return (
+    <StyledButton
+      variant={variant}
+      size={size}
+      fullWidth={fullWidth}
+      disabled={disabled}
+      onClick={disabled ? undefined : onClick}
+      {...rest}
+    >
+      {children}
+    </StyledButton>
+  );
+};
+
+// src/components/Button/index.ts
+export * from './Button';
+
+// src/components/Button/Button.stories.tsx
+import React from 'react';
+import { Story, Meta } from '@storybook/react';
+import { Button, ButtonProps } from './Button';
+
+export default {
+  title: 'Components/Button',
+  component: Button,
+  argTypes: {
+    variant: {
+      control: { type: 'select', options: ['primary', 'secondary', 'outline', 'text'] },
+    },
+    size: {
+      control: { type: 'select', options: ['sm', 'md', 'lg'] },
+    },
+    fullWidth: {
+      control: 'boolean',
+    },
+    disabled: {
+      control: 'boolean',
+    },
+  },
+} as Meta;
+
+const Template: Story<ButtonProps> = (args) => <Button {...args}>Button Text</Button>;
+
+export const Primary = Template.bind({});
+Primary.args = {
+  variant: 'primary',
+  size: 'md',
+};
+
+export const Secondary = Template.bind({});
+Secondary.args = {
+  variant: 'secondary',
+  size: 'md',
+};
+
+export const Outline = Template.bind({});
+Outline.args = {
+  variant: 'outline',
+  size: 'md',
+};
+
+export const Text = Template.bind({});
+Text.args = {
+  variant: 'text',
+  size: 'md',
+};
+
+export const Small = Template.bind({});
+Small.args = {
+  variant: 'primary',
+  size: 'sm',
+};
+
+export const Large = Template.bind({});
+Large.args = {
+  variant: 'primary',
+  size: 'lg',
+};
+
+export const FullWidth = Template.bind({});
+FullWidth.args = {
+  variant: 'primary',
+  size: 'md',
+  fullWidth: true,
+};
+
+export const Disabled = Template.bind({});
+Disabled.args = {
+  variant: 'primary',
+  size: 'md',
+  disabled: true,
+};
+
+// src/components/Button/Button.test.tsx
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { ThemeProvider } from 'styled-components';
+import { theme } from '../../theme';
+import { Button } from './Button';
+
+const renderWithTheme = (ui: React.ReactElement) => {
+  return render(<ThemeProvider theme={theme}>{ui}</ThemeProvider>);
+};
+
+describe('Button', () => {
+  test('renders button with text', () => {
+    renderWithTheme(<Button>Click me</Button>);
+    expect(screen.getByText('Click me')).toBeInTheDocument();
+  });
+
+  test('calls onClick when clicked', () => {
+    const handleClick = jest.fn();
+    renderWithTheme(<Button onClick={handleClick}>Click me</Button>);
+    fireEvent.click(screen.getByText('Click me'));
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+
+  test('does not call onClick when disabled', () => {
+    const handleClick = jest.fn();
+    renderWithTheme(<Button disabled onClick={handleClick}>Click me</Button>);
+    fireEvent.click(screen.getByText('Click me'));
+    expect(handleClick).not.toHaveBeenCalled();
+  });
+});
+
+```
+
+
+1. **Project Structure:**
+   - Well-organized directory structure for components, hooks, theme, etc.
+   - Configuration files for TypeScript, Rollup, Jest, ESLint, and Prettier
+   - Complete package.json with scripts for building, testing, and running Storybook
+
+2. **Core Setup:**
+   - Theme configuration with colors, spacing, typography, etc.
+   - Two starter components: Box (utility layout component) and Button
+   - Storybook setup for component documentation
+   - Testing configuration with Jest and React Testing Library
+
+3. **Development Workflow:**
+   - Build process using Rollup for both CommonJS and ESM output
+   - TypeScript for type safety
+   - Linting and formatting rules
+   - Storybook for development and documentation
+   - Unit testing for components
+
+Getting Started :
+
+1. Run `npm install` to install all dependencies
+2. Start developing components with `npm run storybook`
+3. Test your components with `npm test`
+4. Build the library with `npm run build`
+
+As you build more components, follow the pattern established with Button and Box. Each component should have:
+- The component file itself (ComponentName.tsx)
+- An index.ts file to export it
+- A story file for Storybook documentation
+- A test file for unit tests
+

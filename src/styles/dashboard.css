@@ -1,0 +1,69 @@
+.dashboard-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+/* .dashboard-header {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+  margin-top: 0; 
+} */
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns */
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  grid-template-rows: auto auto auto; /* 3 rows */
+}
+
+.dashboard-card {
+  background-color: #fff;
+  /* border: 1px solid #ddd; */
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  /* transition: box-shadow 0.3s ease; */
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-card-header {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.dashboard-card-header svg {
+  font-size: 1.5rem;
+  color: #3498db;
+  margin-right: 8px;
+}
+
+.dashboard-card-content {
+  font-size: 0.95rem;
+  color: #777;
+}
+
+/* Make the first card in the first row span 2 columns */
+.dashboard-card.large-card {
+  grid-column: span 2;
+}
+
+@media (max-width: 768px) {
+  .dashboard-cards {
+    grid-template-columns: 1fr 1fr; /* 2 columns on smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-cards {
+    grid-template-columns: 1fr; /* Single column layout on mobile */
+  }
+}

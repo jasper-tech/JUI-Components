@@ -1,0 +1,136 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 250px;
+  height: 100vh;
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  transition: width 0.3s ease;
+}
+
+.sidebar.collapsed {
+  width: 70px;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 1px solid #34495e;
+}
+
+.sidebar-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.toggle-btn {
+  background: transparent;
+  border: none;
+  color: #ecf0f1;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 5px;
+}
+
+.sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.sidebar-menu ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-menu li {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.sidebar-menu li:hover {
+  background-color: #34495e;
+}
+
+.sidebar-menu li.active {
+  background-color: #3498db;
+  border-left: 4px solid #2980b9;
+}
+
+.sidebar-menu .icon {
+  font-size: 1.2rem;
+  margin-right: 15px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.sidebar-menu .label {
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #34495e;
+  text-align: center;
+  font-size: 0.8rem;
+}
+/* .sidebar-logo {
+  width: 50px;
+  height: auto;
+} */
+.sidebar-bottom {
+  margin-top: auto;
+  border-top: 1px solid #34495e;
+  padding: 10px 0;
+}
+
+.sidebar-bottom ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-bottom li {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.sidebar-bottom li:hover {
+  background-color: #34495e;
+}
+
+.sidebar-bottom .icon {
+  font-size: 1.2rem;
+  margin-right: 15px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.sidebar-bottom .label {
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar-bottom .active-logout .icon,
+.sidebar-bottom .active-logout .label {
+  color: #e74c3c;
+}
+
+.sidebar-bottom .active-logout .icon {
+  color: #e74c3c;
+}
+
+.sidebar-bottom .active-logout .label {
+  color: #e74c3c;
+}

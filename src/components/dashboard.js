@@ -11,12 +11,13 @@ import {
   FaBell,
   FaRocket,
 } from "react-icons/fa";
+// import DateTimeRegion from "./dashd&tzone";
 
 const Dashboard = () => {
   return (
     <div className="dashboard-container">
-      {/* Header */}
-      {/* <h1 className="dashboard-header">Dashboard</h1> */}
+      {/* Dashboard Header */}
+      <h1 style={{ color: "white", fontSize: "30px" }}>Dashboard</h1>
 
       {/* Cards Grid */}
       <div className="dashboard-cards">
@@ -97,7 +98,7 @@ const Dashboard = () => {
             View recent notifications and alerts.
           </p>
         </div>
-        {/* <div className="dashboard-card">
+        <div className="dashboard-card">
           <div className="dashboard-card-header">
             <FaRocket />
             <h3>Launch</h3>
@@ -105,7 +106,7 @@ const Dashboard = () => {
           <p className="dashboard-card-content">
             Quick access to launch new projects.
           </p>
-        </div> */}
+        </div>
       </div>
     </div>
   );
